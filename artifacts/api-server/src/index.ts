@@ -15,10 +15,16 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-seedIfEmpty().catch((err) => {
-  console.error("Auto-seed failed (non-fatal):", err);
-});
+async function start() {
+  try {
+    await seedIfEmpty();
+  } catch (err) {
+    console.error("Auto-seed failed (non-fatal):", err);
+  }
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
+
+start();

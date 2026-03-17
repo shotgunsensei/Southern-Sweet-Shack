@@ -9,7 +9,7 @@ export async function seedIfEmpty() {
     return;
   }
 
-  console.log("Production database is empty, seeding...");
+  console.log("Database has no products, seeding...");
 
   const passwordHash = await bcrypt.hash("Burney2026!", 10);
   await db
@@ -26,18 +26,13 @@ export async function seedIfEmpty() {
     { name: "Specialty Items", displayOrder: 6 },
   ];
 
-  const categories = await db
+  await db
     .insert(categoriesTable)
     .values(categoryData)
-    .onConflictDoNothing()
-    .returning();
+    .onConflictDoNothing();
 
-  if (categories.length === 0) {
-    console.log("Categories already exist but no products found. Skipping.");
-    return;
-  }
-
-  const catMap = new Map(categories.map((c) => [c.name, c.id]));
+  const allCategories = await db.select().from(categoriesTable);
+  const catMap = new Map(allCategories.map((c) => [c.name, c.id]));
 
   const productData = [
     { name: "Coconut Cake", description: "Classic Southern coconut cake with fluffy coconut frosting", price: "32.99", categoryId: catMap.get("Cakes")!, imageUrl: "" },
