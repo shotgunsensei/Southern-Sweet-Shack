@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout";
 import { useListCategories, useListProducts, type Category, type Product } from "@workspace/api-client-react";
 import { useCart } from "@/hooks/use-cart";
@@ -10,10 +10,11 @@ export default function Home() {
   const { data: categories = [], isLoading: catsLoading } = useListCategories();
   const [activeCategory, setActiveCategory] = useState<number | undefined>(undefined);
   
-  // Initialize with first category once loaded if no category is selected
-  if (!activeCategory && categories.length > 0 && !catsLoading) {
-    setActiveCategory(categories[0].id);
-  }
+  useEffect(() => {
+    if (!activeCategory && categories.length > 0 && !catsLoading) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [activeCategory, categories, catsLoading]);
 
   const productsQuery = useListProducts(
     activeCategory ? { categoryId: activeCategory } : undefined,

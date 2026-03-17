@@ -27,7 +27,7 @@ export default function AdminLogin() {
       {
         onSuccess: (data) => {
           setToken(data.token);
-          setLocation("/admin");
+          setLocation("/admin/dashboard");
         },
         onError: () => {
           setError("Invalid credentials. Please try again.");

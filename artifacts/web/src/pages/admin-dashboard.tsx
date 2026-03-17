@@ -28,7 +28,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!token) {
-      setLocation("/admin/login");
+      setLocation("/admin");
     }
   }, [token, setLocation]);
 
