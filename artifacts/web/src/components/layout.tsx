@@ -140,11 +140,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <a href="https://facebook.com/burneysclinton" target="_blank" rel="noreferrer" className="bg-white/10 p-3 rounded-full hover:bg-primary transition-colors">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="#" className="bg-white/10 p-3 rounded-full hover:bg-primary transition-colors">
+                <a href="https://instagram.com/burneyssweetsandmore" target="_blank" rel="noreferrer" className="bg-white/10 p-3 rounded-full hover:bg-primary transition-colors">
                   <Instagram className="h-5 w-5" />
                 </a>
-                <a href="#" className="bg-white/10 p-3 rounded-full hover:bg-primary transition-colors">
-                  <Music2 className="h-5 w-5" /> {/* TikTok approx */}
+                <a href="https://tiktok.com/@burneyssweetsandmore" target="_blank" rel="noreferrer" className="bg-white/10 p-3 rounded-full hover:bg-primary transition-colors">
+                  <Music2 className="h-5 w-5" />
                 </a>
               </div>
             </div>
