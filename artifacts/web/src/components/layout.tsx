@@ -152,7 +152,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-secondary-foreground/60">
             <p>&copy; {new Date().getFullYear()} Burney's Sweets & More. All rights reserved.</p>
-            <Link href="/admin/login" className="hover:text-accent transition-colors">Admin Portal</Link>
+            <Link href="/admin" className="hover:text-accent transition-colors">Admin Portal</Link>
           </div>
         </div>
       </footer>

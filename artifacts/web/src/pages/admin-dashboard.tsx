@@ -53,7 +53,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     logout();
-    setLocation("/admin/login");
+    setLocation("/admin");
   };
 
   const handleDeleteProduct = (id: number) => {
