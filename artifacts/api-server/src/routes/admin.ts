@@ -116,7 +116,7 @@ router.put("/admin/products/:id", requireAuth, async (req, res): Promise<void> =
     return;
   }
 
-  const updateData: any = {};
+  const updateData: Partial<typeof productsTable.$inferInsert> = {};
   if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
   if (parsed.data.description !== undefined) updateData.description = parsed.data.description;
   if (parsed.data.price !== undefined) updateData.price = parsed.data.price;
@@ -212,7 +212,7 @@ router.put("/admin/categories/:id", requireAuth, async (req, res): Promise<void>
     return;
   }
 
-  const updateData: any = {};
+  const updateData: Partial<typeof categoriesTable.$inferInsert> = {};
   if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
   if (parsed.data.displayOrder !== undefined) updateData.displayOrder = parsed.data.displayOrder;
 

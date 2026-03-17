@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useCart } from "@/hooks/use-cart";
-import { useCreateOrder } from "@workspace/api-client-react";
+import { useCreateOrder, type OrderResponse } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
@@ -31,7 +31,7 @@ export function CheckoutDialog({ open, onOpenChange, onSuccess }: CheckoutDialog
   const { items, clearCart, getTotal } = useCart();
   const { toast } = useToast();
   const createOrder = useCreateOrder();
-  const [successReceipt, setSuccessReceipt] = useState<any>(null);
+  const [successReceipt, setSuccessReceipt] = useState<OrderResponse | null>(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema)
