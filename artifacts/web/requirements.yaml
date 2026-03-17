@@ -1,0 +1,18 @@
+packages:
+  "zustand": "State management for the shopping cart and admin authentication session"
+  "framer-motion": "Smooth page transitions and scroll-reveals for a premium feel"
+  "react-hook-form": "Form state management and validation for checkout and admin forms"
+  "@hookform/resolvers": "Zod resolver for react-hook-form integration"
+
+images:
+  - path: "artifacts/web/public/images/hero-bakery.png"
+    description: "Warm, inviting bakery display case filled with artisan cakes, pastries, and sweet treats. Rich chocolate and caramel tones, soft golden lighting, photorealistic, extremely high quality."
+    aspect_ratio: "16:9"
+  - path: "artifacts/web/public/images/logo-badge.png"
+    description: "Clean, bold, modern minimalist logo badge for 'Burney's Sweets & More'. Circular design, solid dark chocolate background with crisp ivory text, highly legible sans-serif font suitable for vinyl signs."
+    aspect_ratio: "1:1"
+
+notes:
+  - Uses @workspace/api-client-react for TanStack Query hooks.
+  - Admin API endpoints require Bearer token auth passed via request options.
+  - Cart state is managed purely on the frontend via Zustand until checkout submission.

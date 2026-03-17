@@ -14,3 +14,169 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * @summary List all product categories
+ */
+export const ListCategoriesResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  displayOrder: zod.number(),
+});
+export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem);
+
+/**
+ * @summary List products
+ */
+export const ListProductsQueryParams = zod.object({
+  categoryId: zod.coerce.number().optional(),
+});
+
+export const ListProductsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  description: zod.string(),
+  price: zod.string(),
+  imageUrl: zod.string(),
+  categoryId: zod.number(),
+  categoryName: zod.string().optional(),
+  available: zod.boolean(),
+});
+export const ListProductsResponse = zod.array(ListProductsResponseItem);
+
+/**
+ * @summary Submit a new order
+ */
+export const CreateOrderBody = zod.object({
+  customerName: zod.string(),
+  customerEmail: zod.string(),
+  customerPhone: zod.string().optional(),
+  specialInstructions: zod.string().optional(),
+  items: zod.array(
+    zod.object({
+      productId: zod.number(),
+      quantity: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * @summary Admin login
+ */
+export const AdminLoginBody = zod.object({
+  username: zod.string(),
+  password: zod.string(),
+});
+
+export const AdminLoginResponse = zod.object({
+  token: zod.string(),
+  message: zod.string(),
+});
+
+/**
+ * @summary List all products for admin
+ */
+export const AdminListProductsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  description: zod.string(),
+  price: zod.string(),
+  imageUrl: zod.string(),
+  categoryId: zod.number(),
+  categoryName: zod.string().optional(),
+  available: zod.boolean(),
+});
+export const AdminListProductsResponse = zod.array(
+  AdminListProductsResponseItem,
+);
+
+/**
+ * @summary Create a product
+ */
+export const AdminCreateProductBody = zod.object({
+  name: zod.string(),
+  description: zod.string(),
+  price: zod.string(),
+  imageUrl: zod.string().optional(),
+  categoryId: zod.number(),
+  available: zod.boolean().optional(),
+});
+
+/**
+ * @summary Update a product
+ */
+export const AdminUpdateProductParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminUpdateProductBody = zod.object({
+  name: zod.string().optional(),
+  description: zod.string().optional(),
+  price: zod.string().optional(),
+  imageUrl: zod.string().optional(),
+  categoryId: zod.number().optional(),
+  available: zod.boolean().optional(),
+});
+
+export const AdminUpdateProductResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  description: zod.string(),
+  price: zod.string(),
+  imageUrl: zod.string(),
+  categoryId: zod.number(),
+  categoryName: zod.string().optional(),
+  available: zod.boolean(),
+});
+
+/**
+ * @summary Delete a product
+ */
+export const AdminDeleteProductParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List all categories for admin
+ */
+export const AdminListCategoriesResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  displayOrder: zod.number(),
+});
+export const AdminListCategoriesResponse = zod.array(
+  AdminListCategoriesResponseItem,
+);
+
+/**
+ * @summary Create a category
+ */
+export const AdminCreateCategoryBody = zod.object({
+  name: zod.string(),
+  displayOrder: zod.number().optional(),
+});
+
+/**
+ * @summary Update a category
+ */
+export const AdminUpdateCategoryParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminUpdateCategoryBody = zod.object({
+  name: zod.string(),
+  displayOrder: zod.number().optional(),
+});
+
+export const AdminUpdateCategoryResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  displayOrder: zod.number(),
+});
+
+/**
+ * @summary Delete a category
+ */
+export const AdminDeleteCategoryParams = zod.object({
+  id: zod.coerce.number(),
+});

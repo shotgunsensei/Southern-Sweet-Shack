@@ -8,3 +8,94 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface Category {
+  id: number;
+  name: string;
+  displayOrder: number;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  imageUrl: string;
+  categoryId: number;
+  categoryName?: string;
+  available: boolean;
+}
+
+export interface CreateProductBody {
+  name: string;
+  description: string;
+  price: string;
+  imageUrl?: string;
+  categoryId: number;
+  available?: boolean;
+}
+
+export interface UpdateProductBody {
+  name?: string;
+  description?: string;
+  price?: string;
+  imageUrl?: string;
+  categoryId?: number;
+  available?: boolean;
+}
+
+export interface CreateCategoryBody {
+  name: string;
+  displayOrder?: number;
+}
+
+export interface OrderItemInput {
+  productId: number;
+  quantity: number;
+}
+
+export interface CreateOrderBody {
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
+  specialInstructions?: string;
+  items: OrderItemInput[];
+}
+
+export interface OrderItemResponse {
+  productName: string;
+  quantity: number;
+  unitPrice: string;
+  lineTotal: string;
+}
+
+export interface OrderResponse {
+  id: number;
+  customerName: string;
+  customerEmail: string;
+  subtotal: string;
+  taxRate: string;
+  taxAmount: string;
+  total: string;
+  status: string;
+  createdAt: string;
+  items: OrderItemResponse[];
+}
+
+export interface AdminLoginBody {
+  username: string;
+  password: string;
+}
+
+export interface AdminLoginResponse {
+  token: string;
+  message: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+}
+
+export type ListProductsParams = {
+  categoryId?: number;
+};

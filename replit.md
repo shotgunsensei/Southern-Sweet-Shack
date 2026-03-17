@@ -1,6 +1,8 @@
-# Workspace
+# Burney's Sweets and More - Website
 
 ## Overview
+
+Modern website for Burney's Sweets and More, a bakery in Clinton, NC celebrating 10 years. Features a product catalog, online ordering with NC sales tax (6.75%), customer receipt emails, order notifications, and admin portal for managing products/pricing.
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
@@ -12,85 +14,97 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **TypeScript version**: 5.9
 - **API framework**: Express 5
 - **Database**: PostgreSQL + Drizzle ORM
+- **Frontend**: React + Vite + TailwindCSS + shadcn/ui
+- **State management**: Zustand (auth), React Query (server state)
+- **Routing**: Wouter
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
+- **Auth**: JWT (admin), bcryptjs for password hashing
+- **Email**: Nodemailer (SMTP config via env vars)
 - **Build**: esbuild (CJS bundle)
+
+## Key Features
+
+- **Product Catalog**: 6 categories (Cakes, Cupcakes, Pies, Cookies & Pastries, Savory Items, Specialty Items), 31 products
+- **Online Ordering**: Cart with add/remove, checkout form, NC 6.75% sales tax calculation
+- **Email Notifications**: Customer receipt emails + order notifications to john@shotgunninjas.com
+- **Admin Portal**: Login at /admin (Admin/Burney2026!), full CRUD for products and categories
+- **Branding**: Bold, warm bakery design with maroon/gold/cream palette
 
 ## Structure
 
 ```text
 artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
+├── artifacts/
+│   ├── api-server/         # Express API server
+│   │   └── src/
+│   │       ├── routes/     # categories.ts, orders.ts, admin.ts
+│   │       └── lib/        # auth.ts (JWT), email.ts (nodemailer)
+│   └── web/                # React + Vite frontend
+│       └── src/
+│           ├── pages/      # home.tsx, admin-login.tsx, admin-dashboard.tsx
+│           ├── components/ # cart-drawer, checkout-dialog, admin forms
+│           └── hooks/      # use-auth.ts (zustand), use-cart.ts
+├── lib/
 │   ├── api-spec/           # OpenAPI spec + Orval codegen config
 │   ├── api-client-react/   # Generated React Query hooks
 │   ├── api-zod/            # Generated Zod schemas from OpenAPI
 │   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+│       └── src/schema/     # categories, products, orders, orderItems, adminUsers
+├── scripts/
+│   └── src/seed.ts         # Seeds categories, products, admin user
+├── pnpm-workspace.yaml
+├── tsconfig.base.json
+├── tsconfig.json
+└── package.json
 ```
+
+## API Endpoints
+
+- `GET /api/categories` - List all categories
+- `GET /api/products` - List all products with category names
+- `POST /api/orders` - Create order (validates email, quantities, calculates tax)
+- `POST /api/admin/login` - Admin login (returns JWT)
+- `GET /api/admin/products` - List products (auth required)
+- `POST /api/admin/products` - Create product (auth required)
+- `PUT /api/admin/products/:id` - Update product (auth required)
+- `DELETE /api/admin/products/:id` - Delete product (auth required)
+- `GET /api/admin/categories` - List categories (auth required)
+- `POST /api/admin/categories` - Create category (auth required)
+- `PUT /api/admin/categories/:id` - Update category (auth required)
+- `DELETE /api/admin/categories/:id` - Delete category (auth required)
+
+## Database Tables
+
+- `categories` - id, name, displayOrder
+- `products` - id, name, description, price, imageUrl, categoryId, available
+- `orders` - id, customerName, customerEmail, customerPhone, specialInstructions, subtotal, taxRate, taxAmount, total, status, createdAt
+- `order_items` - id, orderId, productId, productName, quantity, unitPrice, lineTotal
+- `admin_users` - id, username, passwordHash
+
+## Environment Variables
+
+- `DATABASE_URL` - PostgreSQL connection (auto-provided by Replit)
+- `JWT_SECRET` - Secret for admin JWT tokens (falls back to random bytes if unset)
+- `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` - Email SMTP config (optional, emails are best-effort)
 
 ## TypeScript & Composite Projects
 
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
+Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references.
 
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
+- **Always typecheck from the root** — run `pnpm run typecheck`
+- **`emitDeclarationOnly`** — only `.d.ts` files during typecheck; actual JS bundling handled by esbuild/tsx/vite
+- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array
 
 ## Root Scripts
 
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages
+- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly`
 
-## Packages
+## Key Commands
 
-### `artifacts/api-server` (`@workspace/api-server`)
-
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
-
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
-
-### `lib/db` (`@workspace/db`)
-
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
-
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
-
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
-
-### `lib/api-spec` (`@workspace/api-spec`)
-
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
-
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
-
-### `lib/api-zod` (`@workspace/api-zod`)
-
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
-
-### `lib/api-client-react` (`@workspace/api-client-react`)
-
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
-
-### `scripts` (`@workspace/scripts`)
-
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+- `pnpm --filter @workspace/api-server run dev` — run API server
+- `pnpm --filter @workspace/web run dev` — run frontend
+- `pnpm --filter @workspace/scripts run seed` — seed database
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate API client from OpenAPI spec
+- `pnpm --filter @workspace/db run push` — push schema changes to DB
